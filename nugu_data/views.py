@@ -55,7 +55,6 @@ Authorization: token TOKEN_STRING
 '''
 
 # actionName: aw_calorie
-
 @api_view(["POST"])
 def calroie(request):
     if request.data:
@@ -64,3 +63,6 @@ def calroie(request):
     else:
         return Response({"message": "error!"})
 
+@api_view()
+def index(request):
+    return Response({"message": "Candy Diary!"})
