@@ -42,5 +42,4 @@ rsa==4.0
 six==1.11.0
 urllib3==1.24.1
 whitenoise==4.1.1
-psycopg2==2.6.2
 coreapi==2.3.3
