@@ -89,7 +89,7 @@ def aw_calorie(request):
         return Response({"resultCode": "404"})
 
 # actionName: aw_bmi
-# return: bmi
+# return: BMI
 @api_view(["POST"])
 def aw_bmi(request):
     if request.data:
