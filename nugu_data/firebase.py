@@ -8,9 +8,22 @@ from firebase_admin import db
 
 class Firebase():
 
+    _token = {
+        "type": "service_account",
+        "project_id": "foodreet-e783e",
+        "private_key_id": "3d49c38eede5091cd953e258492488b12611fad1",
+        "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDbd0jNlUE1adew\nul8E9WiIFrpa14mal4wiNxqMyLYfYBrTW1pGuc48L9J9HlsXk/doSV/9xEHNuS1a\nU25+Ou4RIRpxrEpwrWuipmVOQsgnmQpLrvKYkNk2O0ovRgPuzhboq24qO8wX8sUD\nwe7g7YEiTIdcXjSYkr5cCAfGn5sBpxcYhOEvg4fzNbeSZeZOX7D7mSnSHXjgnJ9o\n/EItQ9pe7BIkYaDD4RgQBxNHQEyjtvkVN8W2wmlbAlpW8ydbVCHRN2NW/Job0T65\nyoqK4Mg3VDWRN/WtuQgj6k3/y0ckfkTJW50CZ3u2MJHwhjDrjvhJ++g6UCvq6uVB\nTMr1LTI/AgMBAAECggEAAobQiUFfI1DJIWk739A9eFeepJ4XoPZ+sAQnY5iJ9DmE\nhYtnMipAdBPu3e7kCJT1A7fYiZDhWw93NLOCMaTXCc5yQf3ES6DLfO9iejCtojsS\nUcW9WEFOpt+u3nV1ZSHtRJd4qLbQhjQOzZjFecRyOKVd55PUEi+aTm/vOvuqaq3u\nz+KcVfg3ct8EYGnGMEx9itDgWzFnlBDAvzSykEVDCJDFoLH1hl4S5NNx5tWCGiJR\nZPafZUWqSJTf1xnNRlafqY/1K6rJ6D40bRuARMdlkdMUFgUFMnJUDelGu/lQmQ9/\nUlB/OViDIJGNcs7M47/2hiP9m4ldrATFeGbkxJjtoQKBgQD72U1Zp+nCVFo/gJf/\nCJxoQgluPdJXMOYbqKsjjflzOaU5DRqMVfvVVdpbdTgKqQP1IP0szetg+jSFqo7J\nGAR54utD0194SXy+vej3FFa2QrKvq7UKdQ0NsBJY5ab91lgUgWwJxatGCuEuqkBC\nFOckkwK2fkyoNRWpp9TWu7rA4QKBgQDfFVcCVAJ5FEQO6TUD6xwQd5h+/bn9ZEbH\nn+7NM592pGjhwREOjOhlMzBfgiiDPuzbJJKxX+ms2o7q5+P8f2a6XAT2E9Q+JGbv\nKuYHaGcBFdT0+7MGi8qDyWduUOvwSC3c4K5qvpsjJmoEUY4i51TGndxFEK1uixnG\nUDn5fI+3HwKBgQDVXNm9FRZjPlde6TDcLY1kfl3C+bkTiSfJUvH6IzOsPLAPT1yo\ne8foit19EieyUFI8AAC9To8VD6QjgcWJ9EEGigpK4e5F1+xJJFcTzDVSH9uGHHA6\nNcQjToGcsqLw9gCVDrha5w4dPuZbRH0//rl8MNfhh8qlzqNVogwdB9pFwQKBgQDC\nfmZ3nyrwyVx065nPKsIzETIhNbFcXHrhPG0E9wcGd10BxkPKvcs3wCNigaY0lz4F\n6aMDhi3DCGImJ7q7v4+e1u90Y+FdtHsR9gLLXpi/d3tNg8yX3nTX5VaJ9X9e5G8n\n7bPjWP8E7E7uKPSVNb7R03vhsyKiCCCWqAeDnrfl3QKBgGRukLkGNbrZXOWFgYhP\n2/Zr0NWWK9uwZthESMvVuMWsF2ZdeP9iYCU+8546LKMQPmj4aF7phZ4qPyE5l/1b\nV8nA8p1DD9Jq0HDYPBOl/VP7A7aPy2qrU8PvDqUMqX46isyXbEKJh8yNo76n+WYa\nDkX7tZHzOVMSr7RovQEPTqWq\n-----END PRIVATE KEY-----\n",
+        "client_email": "firebase-adminsdk-6vdgn@foodreet-e783e.iam.gserviceaccount.com",
+        "client_id": "105473880117782672746",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-6vdgn%40foodreet-e783e.iam.gserviceaccount.com"
+    }
+
     def __init__(self):
         # Initialize firebase.
-        cred = credentials.Certificate("foodreet-e783e-firebase-adminsdk-6vdgn-3d49c38eed.json")
+        cred = credentials.Certificate(json.loads(_token))
         firebase_admin.initialize_app(cred, {
             "databaseURL": "https://foodreet-e783e.firebaseio.com/"
         })
