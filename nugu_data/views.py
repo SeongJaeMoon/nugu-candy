@@ -59,7 +59,7 @@ def index(request):
 
 @api_view(["GET"])
 def health(request):
-    if status.is_success():
+    if status.is_success(code=200):
         return Response(status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -89,6 +89,7 @@ def aw_calorie(request):
     else:
         return Response({"resultCode": "404"})
 
+
 # actionName: aw_bmi
 # return: BMI
 @api_view(["POST"])
@@ -96,5 +97,4 @@ def aw_bmi(request):
     if request.data:
         return Response({"message": request.data})
     else:
-        request.state
         return Response({"message": "error!"})
