@@ -14,10 +14,10 @@ class Firebase():
         firebase_admin.initialize_app(cred, {
             "databaseURL": "https://foodreet-e783e.firebaseio.com/"
         })
-        self.db = db.reference('calories')
-        self.bmi = {}
-        self.ret = {}
-        self.user_info = {}
+        self.db = db.reference('calories') # DB Reference
+        self.bmi = {} # BMI Reference
+        self.ret = {} # Temporary Calorie Result
+        self.user_info = {} # User Infomation Reference
         self.file_dir = "/Users/moonseongjae/python-worksapce/Nugu/nugu_data/calorie/calorie{}.xlsx"
 
    

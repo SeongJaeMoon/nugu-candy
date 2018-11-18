@@ -1,8 +1,5 @@
-from rest_framework import serializers
-from rest_framework import generics, permissions, renderers
-from rest_framework.decorators import api_view, detail_route
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 
 from nugu_data.models import Calorie 
 from nugu_data.firebase import Firebase
@@ -22,20 +19,20 @@ Authorization: token TOKEN_STRING
 {
     "version": "2.0",
     "action": {
-        "actionName": "{{string}}",
+        "actionName": "aw_calorie",
         "parameters": {
-            KEY: {
-                "type": "{{string}}",
-                "value": VALUE
+            "FOOD": {
+                "type": "FOODS",
+                "value": "치킨"
             }
         }
-    }
+    },
     "context": {
         "accessToken": "{{string}}",
         "device": {
             "type": "{{string}}",
             "state": {
-                KEY: VALUE
+                "KE"Y: "VALUE"
             }
         }
     }
@@ -54,15 +51,49 @@ Authorization: token TOKEN_STRING
 }
 '''
 
-# actionName: aw_calorie
-@api_view(["POST"])
-def calroie(request):
-    if request.data:
-        print(request.data)
-        return Response({"message": "Hello, world!"})
-    else:
-        return Response({"message": "error!"})
-
 @api_view()
 def index(request):
     return Response({"message": "Candy Diary!"})
+
+
+@api_view(["GET"])
+def health(request):
+    if request.status_code == 200:
+        return Response({"status":"OK"})
+    else:
+        return Response({"status":"error " + request.status_code})
+
+
+# actionName: aw_calorie
+# return: Calorie
+@api_view(["POST"])
+def aw_calorie(request):
+    if request.data:
+        data = request.data
+        fb = Firebase()
+        params = data.get("action").get("parameters")
+        if params is not None:
+            fb.set_cal([params.get("FOOD").get("value")])
+        result = fb.ret.get("result").get("cal").get("kal")
+        if result is not None:
+            output = {
+                "FOOD":fb.ret.get("result").get("cal").get("name"),
+                "Calorie":result
+            }
+            return Response({"resultCode":"OK", "output":output})
+        else:
+            return Response({"resultCode": "10"})    
+        else:
+            return Response({"resultCode": "404"})    
+    else:
+        return Response({"resultCode": "404"})
+
+# actionName: aw_bmi
+# return: bmi
+@api_view(["POST"])
+def aw_bmi(request):
+    if request.data:
+        return Response({"message": request.data})
+    else:
+        request.state
+        return Response({"message": "error!"})
