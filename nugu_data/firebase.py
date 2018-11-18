@@ -240,5 +240,4 @@ class Firebase():
 
 if __name__ == "__main__":
     start = time.time()
-
     print("--- %s seconds---" % (time.time() - start))

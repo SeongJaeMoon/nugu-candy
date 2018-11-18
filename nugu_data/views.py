@@ -75,11 +75,11 @@ def aw_calorie(request):
         params = data.get("action").get("parameters")
         if params is not None:
             fb.set_cal([params.get("FOOD").get("value")])
-            result = fb.ret[0].get("result").get("cal").get("kal")
-            if result is not None:
+            result = fb.ret.get("result")[0]
+            if result:
                 output = {
-                    "FOOD":fb.ret[0].get("result").get("cal").get("name"),
-                    "Calorie":result
+                    "FOOD":result.get("cal").get("name"),
+                    "Calorie":result.get("cal").get("kal")
                 }
                 return Response({"resultCode":"OK", "output":output})
             else:
