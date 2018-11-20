@@ -67,8 +67,8 @@ def health(request):
 
 # actionName: aw_calorie
 # return: Calorie
-@api_view(["GET"])
-def aw_calorie(request):
+@api_view(["POST"])
+def awCalorie(request):
     if request.data:
         data = request.data
         fb = Firebase()
@@ -96,7 +96,7 @@ def aw_calorie(request):
 # actionName: aw_bmi
 # return: BMI
 @api_view(["POST"])
-def aw_bmi(request):
+def awBmi(request):
     if request.data:
         return Response({"message": request.data})
     else:
