@@ -1,25 +1,24 @@
+import sys, json
 from django.test import TestCase
-import sys
-import json
 import unittest
 
-# def output(response_type, message, download_link):
-#     if download_link == '':
-#        response = [
-#         {
-#              'type': response_type,
-#              'message': message
-#          }
-#      ]
-#      else:
-#      response = [
-#       {
-#               'type': response_type,
-#               'message': message,
-#               'download_link': download_link
-#        }
-#      ]
-#      return jsonify({'response': response})
+def output(response_type, message, download_link):
+    if download_link == '':
+       response = [
+        {
+            'type': response_type,
+            'message': message
+         }
+     ]
+     else:
+     response = [
+      {
+            'type': response_type,
+            'message': message,
+            'download_link': download_link
+       }
+     ]
+     return jsonify({'response': response})
 
 class TestFunctions(unittest.TestCase):
  '''Test case for the client methods.'''

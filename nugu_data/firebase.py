@@ -9,6 +9,7 @@ from firebase_admin import db
 
 class Firebase():
 
+
     def __init__(self):
         # Initialize firebase.
         _token = {
@@ -229,7 +230,6 @@ class Firebase():
                energe = round(662 - (9.53 * age) + pa * ((15.91 * weight_kg) + (539.6 * height_cm) / 100))
             else:
                energe = round(354 - (6.91 * age) + pa * ((9.36 * weight_kg) + (726 * height_cm) / 100))
-            
             return energe
        else:
            return None

@@ -7,7 +7,7 @@ from nugu_data.firebase import Firebase
 
 '''
 - Request
-Param
+- Param
     FOOD
 
 POST /action_name HTTP/1.1
@@ -67,7 +67,7 @@ def health(request):
 
 # actionName: aw_calorie
 # return: Calorie
-@api_view(["POST"])
+@api_view(["GET"])
 def aw_calorie(request):
     if request.data:
         data = request.data
@@ -78,10 +78,13 @@ def aw_calorie(request):
             result = fb.ret.get("result")[0]
             if result:
                 output = {
-                    "FOOD":result.get("cal").get("name"),
-                    "Calorie":result.get("cal").get("kal")
+                    "FOOD": params.get("FOOD").get("value"),
+                    "Calorie": result.get("cal").get("kal")
                 }
-                return Response({"resultCode":"OK", "output":output})
+                return Response(data={"version":"1.0.0", 
+                                      "resultCode":"OK", 
+                                      "output":output},
+                                 content_type="application/json")
             else:
                 return Response({"resultCode": "10"})    
         else:
