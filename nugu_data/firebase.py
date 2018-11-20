@@ -25,9 +25,10 @@ class Firebase():
             "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-6vdgn%40foodreet-e783e.iam.gserviceaccount.com"
         }
         cred = credentials.Certificate(json.loads(str(_token).replace("'", '"')))
-        firebase_admin.initialize_app(cred, {
-            "databaseURL": "https://foodreet-e783e.firebaseio.com/"
-        })
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(cred, {
+                "databaseURL": "https://foodreet-e783e.firebaseio.com/"
+            })
         self.db = db.reference('calories') # DB Reference
         self.bmi = {} # BMI Reference
         self.ret = {} # Temporary Calorie Result
@@ -240,4 +241,7 @@ class Firebase():
 
 if __name__ == "__main__":
     start = time.time()
+    fb = Firebase()
+    fb.set_cal(["치킨"])
+    print(fb.ret)
     print("--- %s seconds---" % (time.time() - start))
