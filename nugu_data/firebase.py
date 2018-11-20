@@ -243,5 +243,6 @@ if __name__ == "__main__":
     start = time.time()
     fb = Firebase()
     fb.set_cal(["치킨"])
-    print(fb.ret)
+    result = fb.ret.get("result")[0]
+    print(result.get("cal").get("name"))
     print("--- %s seconds---" % (time.time() - start))

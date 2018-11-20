@@ -78,7 +78,8 @@ def awCalorie(request):
             result = fb.ret.get("result")[0]
             if result:
                 output = {
-                    "FOOD": params.get("FOOD").get("value"),
+                    # params.get("FOOD").get("value")
+                    "FOOD": result.get("cal").get("name"),
                     "Calorie": result.get("cal").get("kal")
                 }
                 return Response(data={"version":"1.0.0", 
