@@ -117,7 +117,7 @@ def awClt(request):
                 fb.user_info['gender'] = 1
             elif gender == "여성" or gender == "여자":
                 fb.user_info['gender'] = 0
-            else
+            else:
                 return Response({"resultCode": "12"}) # 성별 정보 부족
             
             if mins is not None:
@@ -177,7 +177,7 @@ def awEnergy(request):
             elif gender == "여성" or gender == "여자":
                 fb.user_info['gender'] = 0
                 fb.user_info['pa'] = fb.fm_pa_list[1]
-            else
+            else:
                 return Response({"resultCode": "12"}) # 성별 정보 부족
             
             output = {
