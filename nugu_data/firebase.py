@@ -194,7 +194,7 @@ class Firebase():
             if distance:
                 na_mg = distance.get("cal").get("na_mg")
                 if na_mg > 1000:
-                    distance["content"] = "이 음식은 " + str(na_mg) + "mg의 나트륨이 포함된 나트륨 함유량이 높은 음식입니다."
+                    distance["content"] = "이 음식은 " + str(na_mg) + "mg의 높은 나트륨 수치의 음식입니다."
                 self.ret['result'] = distance
         except Exception as e:
             print(e)
@@ -331,6 +331,13 @@ class Firebase():
             value = round((_cals / result / distance[1]) * (1440))
         
         return str(value) + "cal"
+
+
+    def save_db(self, _id):
+        height = self.user_info['height']
+        weight = self.user_info['weight']
+        age = self.user_info['age']
+        gender = self.user_info['gender']
 
 
 if __name__ == "__main__":
