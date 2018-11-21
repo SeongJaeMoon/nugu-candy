@@ -34,6 +34,10 @@ def awCalorie(request):
                 result = fb.ret.get("result")
             except (ValueError, TypeError):
                 return Response({"resultCode": "10"})    
+            
+            if result is None:
+                return Response({"resultCode": "10"})    
+
             if result:
                 na_mg = result.get("content")
                 if na_mg is not None:
