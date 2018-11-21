@@ -178,7 +178,7 @@ class Firebase():
                             "category": d.get('category'),
                             "name": d.get('name'), 
                             "quanty": d.get('quanty'),
-                            "kal": d.get('kal'),
+                            "kal": round(d.get('kal')),
                             "tan_g": d.get('tan_g'),
                             "dan_g": d.get('dan_g'),
                             "ji_g": d.get('ji_g'),
@@ -195,7 +195,7 @@ class Firebase():
                     if distance and distance is not None:
                         na_mg = distance.get("cal").get("na_mg")
                         if na_mg > 1000:
-                            distance["content"] = "이 음식은 " + str(na_mg) + "mg의 높은 나트륨 수치의 음식입니다."
+                            distance["content"] = "이 음식은 " + str(round(na_mg)) + "mg의 높은 나트륨 수치의 음식입니다."
                     self.ret['result'] = distance
                 else:
                     self.ret['result'] = None

@@ -5,7 +5,6 @@ from rest_framework import status
 from nugu_data.models import Calorie 
 from nugu_data.firebase import Firebase
 
-fb = Firebase()
 
 @api_view()
 def index(request):
@@ -26,6 +25,7 @@ def health(request):
 @api_view(["POST"])
 def awCalorie(request):
     if request.data:
+        fb = Firebase()
         data = request.data
         params = data.get("action").get("parameters")
         if params is not None:
@@ -68,8 +68,10 @@ def awCalorie(request):
 @api_view(["POST"])
 def awBmi(request):
     if request.data:
+        fb = Firebase()
         data = request.data
         params = data.get("action").get("parameters")
+        
         if params is not None:
             weight = params.get("WEIGHTS").get("value")
             height = params.get("HEIGHTS").get("value")
@@ -104,6 +106,7 @@ def awBmi(request):
 @api_view(["POST"])
 def awClt(request):
     if request.data:
+        fb = Firebase()
         data = request.data
         params = data.get("action").get("parameters")
         if params is not None:
@@ -165,8 +168,11 @@ def awClt(request):
 @api_view(["POST"])
 def awEnergy(request):
     if request.data:
+        fb = Firebase()
         data = request.data
         params = data.get("action").get("parameters")
+        # session = data.get("context").get("session").get("id")
+
         if params is not None:
             weight = params.get("WS").get("value")
             height = params.get("HS").get("value")
@@ -207,3 +213,5 @@ def awEnergy(request):
             return Response({"resultCode": "404"})    
     else:
         return Response({"resultCode": "404"})
+
+
