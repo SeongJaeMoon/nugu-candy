@@ -5,52 +5,7 @@ from rest_framework import status
 from nugu_data.models import Calorie 
 from nugu_data.firebase import Firebase
 
-'''
-- Request
-- Param
-    FOOD
-
-POST /action_name HTTP/1.1
-Accept: application/json, */*
-Content-Length: 400
-Content-Type: application/json
-Host: builder.open.co.kr
-Authorization: token TOKEN_STRING
-
-{
-    "version": "2.0",
-    "action": {
-        "actionName": "aw_calorie",
-        "parameters": {
-            "FOOD": {
-                "type": "FOODS",
-                "value": "치킨"
-            }
-        }
-    },
-    "context": {
-        "accessToken": "{{string}}",
-        "device": {
-            "type": "{{string}}",
-            "state": {
-                "KE"Y: "VALUE"
-            }
-        }
-    }
-}
-
-- Response
-{
-    "version": "2.0",
-    "resultCode": "{{string}}",
-    "output": {
-        "datetime": "오늘",
-        KEY1: VALUE1,
-        KEY2: VALUE2,
-        ...
-    }
-}
-'''
+fb = Firebase()
 
 @api_view()
 def index(request):
@@ -66,26 +21,34 @@ def health(request):
 
 
 # actionName: aw_calorie
+# Request Param: FOOD
 # return: Calorie
 @api_view(["POST"])
 def awCalorie(request):
     if request.data:
         data = request.data
-        fb = Firebase()
         params = data.get("action").get("parameters")
         if params is not None:
-            fb.set_cal([params.get("FOOD").get("value")])
-            result = fb.ret.get("result")[0]
+            fb.set_cal(params.get("FOOD").get("value"))
+            try:
+                result = fb.ret.get("result")
+            except (ValueError, TypeError):
+                return Response({"resultCode": "10"})    
             if result:
+                na_mg = result.get("content")
+                if na_mg is not None:
+                    content = result.get("content")
+                else:
+                    content = ""
                 output = {
-                    # params.get("FOOD").get("value")
                     "FOOD": result.get("cal").get("name"),
-                    "Calorie": result.get("cal").get("kal")
+                    "Calorie": result.get("cal").get("kal"),
+                    "Content": content
                 }
                 return Response(data={"version":"1.0.0", 
                                       "resultCode":"OK", 
                                       "output":output},
-                                 content_type="application/json")
+                                content_type="application/json")
             else:
                 return Response({"resultCode": "10"})    
         else:
@@ -94,11 +57,148 @@ def awCalorie(request):
         return Response({"resultCode": "404"})
 
 
-# actionName: aw_bmi
+# actionName: awBmi
+# Request Param: weight_kg, height_cm
 # return: BMI
 @api_view(["POST"])
 def awBmi(request):
     if request.data:
-        return Response({"message": request.data})
+        data = request.data
+        params = data.get("action").get("parameters")
+        if params is not None:
+            weight = params.get("WEIGHTS").get("value")
+            height = params.get("HEIGHTS").get("value")
+            fb.set_bmi(weight_kg=weight, 
+                       height_cm=height)    
+            if fb.bmi:
+                if fb.bmi.get("bmi") is None:
+                    return Response({"resultCode": "11"}) # 키 or 몸무게 정보 부족
+                output = {
+                    "WEIGHT": params.get("WEIGHT").get("value"),
+                    "HEIGHT": params.get("HEIGHT").get("value"),
+                    "WEIGHTS": weight,
+                    "HEIGHTS": height,
+                    "bmi": fb.bmi.get("bmi")[0],
+                    "content": fb.bmi.get("bmi")[1]
+                }
+                return Response(data={"version":"1.0.0", 
+                                      "resultCode":"OK", 
+                                      "output":output},
+                                content_type="application/json")
+            else:
+                return Response({"resultCode": "10"})    
+        else:
+            return Response({"resultCode": "404"})    
     else:
-        return Response({"message": "error!"})
+        return Response({"resultCode": "404"})
+
+
+# actionName: awClt
+# Request Param: weight_kg, height_cm, age, gender, _mins, _cals, _type
+# return: Energy
+@api_view(["POST"])
+def awClt(request):
+    if request.data:
+        data = request.data
+        params = data.get("action").get("parameters")
+        if params is not None:
+            weight = params.get("WEIGHTS").get("value")
+            height = params.get("HEIGHTS").get("value")
+            age = params.get("AGES").get("value")
+            gender = params.get("GENDERS").get("value")
+            _mins = params.get("MINS").get("value")
+            _cals = params.get("CALS").get("value")
+            _type = params.get("TYPE").get("value")
+            fb.user_info['height'] = height
+            fb.user_info['weight'] = weight
+            fb.user_info['age'] = age
+            
+            if gender == "남성" or gender == "남자":
+                fb.user_info['gender'] = 1
+            elif gender == "여성" or gender == "여자":
+                fb.user_info['gender'] = 0
+            else
+                return Response({"resultCode": "12"}) # 성별 정보 부족
+            
+            if mins is not None:
+                result = fb.cal_clt(_type=_type, _mins=_mins)
+            elif clas is not None:
+                result = fb.cal_clt(_type=_type, _cals=_cals)
+            else:
+                return Response({"resultCode": "13"}) # 시간 or 칼로리 정보 부족
+            
+            if result:
+                output = {
+                    "WEIGHT" :params.get("WEIGHT").get("value"),
+                    "HEIGHT": params.get("WEIGHT").get("value"),
+                    "AGE": params.get("AGE").get("value"),
+                    "GENDER": params.get("GENDER").get("value"),
+                    "WEIGHTS": weight,
+                    "HEIGHTS": height,
+                    "AGES": age,
+                    "GENDERS": gender,
+                    "_mins": _mins,
+                    "_cals": _cals,
+                    "_type": _type,
+                    "content": result
+                }
+                return Response(data={"version":"1.0.0", 
+                                      "resultCode":"OK", 
+                                      "output":output},
+                                content_type="application/json")
+            else:
+                return Response({"resultCode": "10"})    
+        else:
+            return Response({"resultCode": "404"})    
+    else:
+        return Response({"resultCode": "404"})
+
+
+# actionName: awEnergy
+# Request Param: weight_kg, height_cm, age, gender, (pa)
+# return: Daily Energy
+@api_view(["POST"])
+def awEnergy(request):
+    if request.data:
+        data = request.data
+        params = data.get("action").get("parameters")
+        if params is not None:
+            weight = params.get("WEIGHTS").get("value")
+            height = params.get("HEIGHTS").get("value")
+            age = params.get("AGES").get("value")
+            gender = params.get("GENDERS").get("value")
+            fb.user_info['height'] = height
+            fb.user_info['weight'] = weight
+            fb.user_info['age'] = age
+
+            if gender == "남성" or gender == "남자":
+                fb.user_info['gender'] = 1
+                fb.user_info['pa'] = fb.m_pa_list[1]
+            elif gender == "여성" or gender == "여자":
+                fb.user_info['gender'] = 0
+                fb.user_info['pa'] = fb.fm_pa_list[1]
+            else
+                return Response({"resultCode": "12"}) # 성별 정보 부족
+            
+            output = {
+                "WEIGHT" :params.get("WEIGHT").get("value"),
+                "HEIGHT": params.get("WEIGHT").get("value"),
+                "AGE": params.get("AGE").get("value"),
+                "GENDER": params.get("GENDER").get("value"),
+                "WEIGHTS": weight,
+                "HEIGHTS": height,
+                "AGES": age,
+                "GENDERS": gender,
+                "energy": str(fb.get_energy())+"kcal",
+                "major_tan": fb.major_nutrients().get("tan_g"),
+                "major_dan": fb.major_nutrients().get("dan_g"),
+                "major_ji": fb.major_nutrients().get("ji_g")
+            }
+            return Response(data={"version":"1.0.0", 
+                                  "resultCode":"OK", 
+                                  "output":output},
+                            content_type="application/json")    
+        else:
+            return Response({"resultCode": "404"})    
+    else:
+        return Response({"resultCode": "404"})

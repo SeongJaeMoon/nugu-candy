@@ -34,8 +34,30 @@ class Firebase():
         self.ret = {} # Temporary Calorie Result
         self.user_info = {} # User Infomation Reference
         self.file_dir = "/Users/moonseongjae/python-worksapce/Nugu/nugu_data/calorie/calorie{}.xlsx"
+        self.fm_pa_list = [1.0, 1.12, 1.27, 1.45] # 여성 신체활동계수
+        self.m_pa_list = [1.0, 1.11, 1.25, 1.48] # 남성 신체활동계수
+        # License, Arizona State University (https://www.ncbi.nlm.nih.gov/pubmed/21681120)
+        # 2011 Compendium of Physical Activities: a second update of codes and MET values.
+        self.exercise = [
+            ["자전거", 7.5], # 기본
+            ["걷기", 8.3], # 기본
+            ["조깅", 7], # 기본
+            ["수영", 7], # 자유형 기준
+            ["야구", 6.5], # 야구 기본
+            ["볼링", 3.8], # 볼링 기본
+            ["복싱", 12.8], # In Ring
+            ["축구", 7], # 축구 기본
+            ["스쿼시", 7.3], # 스쿼시 기본
+            ["테니스", 7.3, 0], # 테니스 기본
+            ["배구", 7, 0], # 배구 기본
+            ["코어", 3.8, 0], # 코어 운동 기본
+            ["필라테스", 3, 0], # 필라테스 기본
+            ["PT", 7.8, 0], # PT 기본
+            ["에어로빅", 7.3, 0], # 에어로빅 기본
+            ["헬스", 5.5, 0] # 헬스 기본
+        ]
 
-   
+
     def save_cal2(self, file):
         if not file:
             raise Exception('NoFileName')
@@ -147,31 +169,32 @@ class Firebase():
         '''
         try:
             save_distance = [] # temp var
-            distance = [] # temp var
             data = self.db.get()
             if data is not None:
                 # Loop for entities list.
-                for n in name:
-                    for d in data.values():
-                        if n in d.get('name'):
-                            temp = {
-                                "category": d.get('category'),
-                                "name": d.get('name'), 
-                                "quanty": d.get('quanty'),
-                                "kal": d.get('kal'),
-                                "tan_g": d.get('tan_g'),
-                                "dan_g": d.get('dan_g'),
-                                "ji_g": d.get('ji_g'),
-                                "dang_g": d.get('dang_g'),
-                                "na_mg": d.get('na_mg'),
-                                "chol_mg": d.get('chol_mg'),
-                                "pho_g": d.get('pho_g'),
-                                "trans_g": d.get('trans_g')   
-                            }
-                            save_distance.append({'cal':temp})
-                    # Calculate for edit_distance.
-                    distance.append(min(save_distance, key = lambda s: self.edit_distance(n, s.get("cal").get("name"))))
+                for d in data.values():
+                    if name in d.get('name'):
+                        temp = {
+                            "category": d.get('category'),
+                            "name": d.get('name'), 
+                            "quanty": d.get('quanty'),
+                            "kal": d.get('kal'),
+                            "tan_g": d.get('tan_g'),
+                            "dan_g": d.get('dan_g'),
+                            "ji_g": d.get('ji_g'),
+                            "dang_g": d.get('dang_g'),
+                            "na_mg": d.get('na_mg'),
+                            "chol_mg": d.get('chol_mg'),
+                            "pho_g": d.get('pho_g'),
+                            "trans_g": d.get('trans_g')   
+                        }
+                        save_distance.append({'cal':temp})
+                # Calculate for edit_distance.
+                distance = min(save_distance, key = lambda s: self.edit_distance(name, s.get("cal").get("name")))
             if distance:
+                na_mg = distance.get("cal").get("na_mg")
+                if na_mg > 1000:
+                    distance["content"] = "이 음식은 " + str(na_mg) + "mg의 나트륨이 포함된 나트륨 함유량이 높은 음식입니다."
                 self.ret['result'] = distance
         except Exception as e:
             print(e)
@@ -206,43 +229,128 @@ class Firebase():
 
 
     def set_bmi(self, weight_kg, height_cm):
-        # BMI = 몸무게(kg) / 키(m) * 키(m)
-        temp_bmi = round(weight_kg / (height_cm * height_cm) * 10000, 2)
-        if temp_bmi < 18.5:
-            ret = "저체중"
-        elif temp_bmi > 18.5 and temp_bmi < 24.9:
-            ret = "정상체중"
-        elif temp_bmi > 25 and temp_bmi < 29.9:
-            ret = "과체중"
+        # height_cm = int(self.user_info.get('height'))
+        # weight_kg = int(self.user_info.get('weight'))
+        
+        if (weight_kg <= 40) or (weight_kg > 600) or (50 > height_cm):
+            # height error, "Over the 50cm", weight error, "Between 41 and 599"
+           self.bmi["bmi"] = None 
         else:
-            ret = "비만"
-        self.bmi[str(parse(time.strftime('%Y-%m-%d')))] = [temp_bmi, ret]
-    
-   
-    def set_energe(self):    
-       heigt_cm = self.user_info.get('height')
-       weight_kg = self.user_info.get('weight')
-       age = self.user_info.get('age')
-       gender = self.user_info.get('gender')
-       pa = self.user_info.get('pa')
-       
-       if (heigt_cm and weight_kg and age and gender) is not None:
-            if age == 1:
-               energe = round(662 - (9.53 * age) + pa * ((15.91 * weight_kg) + (539.6 * height_cm) / 100))
+            # BMI = 몸무게(kg) / 키(m) * 키(m)
+            temp_bmi = round(weight_kg / (height_cm * height_cm) * 10000, 2)
+            if temp_bmi < 18.5:
+                ret = "저체중"
+            elif temp_bmi > 18.5 and temp_bmi < 24.9:
+                ret = "정상체중"
+            elif temp_bmi > 25 and temp_bmi < 29.9:
+                ret = "과체중"
             else:
-               energe = round(354 - (6.91 * age) + pa * ((9.36 * weight_kg) + (726 * height_cm) / 100))
+                ret = "비만"
+            # str(parse(time.strftime('%Y-%m-%d')))
+            self.bmi["bmi"] = [temp_bmi, ret]
+    
+
+    def get_energy(self):    
+       height_cm = int(self.user_info.get('height'))
+       weight_kg = int(self.user_info.get('weight'))
+       age = int(self.user_info.get('age'))
+       gender = int(self.user_info.get('gender'))
+       pa = int(self.user_info.get('pa'))
+       
+       if (age <= 12) or (age > 80):
+           return 11 # age error, "Between 13 and 80"
+       if (weight_kg <= 40) or (weight_kg > 600):
+           return 12 # weight error, "Between 41 and 599"
+       if (50 > height_cm):
+           return 13 # height error, "Over the 50cm"
+
+       if (height_cm and weight_kg and age and gender) is not None:
+            if gender == 1:
+                # 성인 남성
+               energe = round(662 - (9.53 * age) + pa * ((15.91 * weight_kg) 
+                              + (539.6 * height_cm) / 100))
+            else:
+                # 성인 여성
+               energe = round(354 - (6.91 * age) + pa * ((9.36 * weight_kg) 
+                              + (726 * height_cm) / 100))
             return energe
        else:
-           return None
+           return None # 필요한 정보 부족
 
 
-    # def cal_clt(self):
+    '''
+    탄수화물 = 2,000 x 0.65 = 1,300kcal/4= 325g
+    단백질 = 2,000 x 0.15 = 300kcal/4= 75g
+    지방 = 2,000 x 0.2 = 400kcal/9= 44g
+    (3대 열량영양소 섭취비율은 대상자에 따라 적절히 조절)
+    '''
+    def major_nutrients(self):
+        energe = self.get_energy()
+        tan_g = "%s" % str(round((energe * 0.65) / 4)) + "g"
+        dan_g = "%s" % str(round((energe * 0.15) / 4)) + "g"
+        ji_g =  "%s" % str(round((energe * 0.2) / 9)) + "g"
+        result = {
+            "tan_g": tan_g,
+            "dan_g": dan_g,
+            "ji_g": ji_g
+        }
+        return result
+
+
+    def cal_clt(self, _type=None, _mins=0, _cals=0):
+        height_cm = int(self.user_info.get('height'))
+        weight_kg = int(self.user_info.get('weight'))
+        age = int(self.user_info.get('age'))
+        gender = int(self.user_info.get('gender'))
+
+        if (age <= 12) or (age > 80):
+           return 11 # age error, "Between 13 and 80"
+        if (weight_kg <= 40) or (weight_kg > 600):
+           return 12 # weight error, "Between 41 and 599"
+        if (50 > height_cm):
+           return 13 # height error, "Over the 50cm"
+        if (_mins > 0 and _cals > 0) or (_mins == 0 and _cals == 0):
+	        return 14 # mins or cals error
+
+        if gender == 1:
+            # 성인 남성
+            result = 66.5 + (13.75 * weight_kg) + (5.003 * height_cm) - (6.775 * age)
+        else:
+            # 성인 여성
+            result = 655.1 + (9.563 * weight_kg) + (1.850 * height_cm) - (4.676 * age); 
+        
+        distance = min(self.exercise, key = lambda s: self.edit_distance(_type, s[0]))
+        # [자전거, 걷기, 조깅, 수영, 야구, 볼링, 복싱, 축구, 스쿼시, 테니스, 배구, 코어, 필라테스, PT, 에어로빅, 헬스]
+        if _mins > 0:
+            value = round((result * distance[1]) * (_mins/1440))
+        if _cals > 0:
+            value = round((_cals / result / distance[1]) * (1440))
+        
+        return str(value) + "cal"
 
 
 if __name__ == "__main__":
     start = time.time()
     fb = Firebase()
-    fb.set_cal(["치킨"])
-    result = fb.ret.get("result")[0]
-    print(result.get("cal").get("name"))
+    fb.set_bmi(75, 178) # input: weight_kg, height_cm
+    fb.user_info['height'] = 178 # input: height_cm
+    fb.user_info['weight'] = 75 # input: weight_cm
+    fb.user_info['age'] = 26 # input: age_number
+    fb.user_info['gender'] = 1 # input: gender_MaleorFemale
+    fb.user_info['pa'] = fb.m_pa_list[1] # input: 신체 활동 계수, 비활동적, 보통, 활동적, 매우 활동적
+    # fb.user_info['pa'] = fb.fm_pa_list[1]
+    print(fb.bmi)
+    print(str(fb.get_energy())+"kcal") 
+    print(fb.cal_clt(_type="자전거", _cals=3000)) # input: _type, MinsorCals
+    print(fb.major_nutrients())
+
+    '''
+    test -> e.g.
+
+    {'2018-11-20 00:00:00': [23.67, '정상체중']}
+    2568kcal
+    566cal
+    318cal
+    {'탄수화물': '417g', '단백질': '96g', '지방': '57g'}
+    '''
     print("--- %s seconds---" % (time.time() - start))
