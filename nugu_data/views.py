@@ -168,8 +168,8 @@ def awEnergy(request):
         data = request.data
         params = data.get("action").get("parameters")
         if params is not None:
-            weight = params.get("WEIGHTS").get("value")
-            height = params.get("HEIGHTS").get("value")
+            weight = params.get("WS").get("value")
+            height = params.get("HS").get("value")
             age = params.get("AGES").get("value")
             gender = params.get("GENDERS").get("value")
             fb.user_info['height'] = height
@@ -186,12 +186,12 @@ def awEnergy(request):
                 return Response({"resultCode": "12"}) # 성별 정보 부족
             
             output = {
-                "WEIGHT" :params.get("WEIGHT").get("value"),
-                "HEIGHT": params.get("WEIGHT").get("value"),
+                "W" :params.get("W").get("value"),
+                "H": params.get("H").get("value"),
                 "AGE": params.get("AGE").get("value"),
                 "GENDER": params.get("GENDER").get("value"),
-                "WEIGHTS": weight,
-                "HEIGHTS": height,
+                "WS": weight,
+                "HS": height,
                 "AGES": age,
                 "GENDERS": gender,
                 "energy": str(fb.get_energy())+"kcal",
