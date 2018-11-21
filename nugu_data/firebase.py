@@ -231,7 +231,11 @@ class Firebase():
     def set_bmi(self, weight_kg, height_cm):
         # height_cm = int(self.user_info.get('height'))
         # weight_kg = int(self.user_info.get('weight'))
-        
+        if isinstance(weight_kg, str):
+            weight_kg = int(weight_kg)
+        if isinstance(height_cm, str):
+            height_cm = int(height_cm)
+
         if (weight_kg <= 40) or (weight_kg > 600) or (50 > height_cm):
             # height error, "Over the 50cm", weight error, "Between 41 and 599"
            self.bmi["bmi"] = None 
