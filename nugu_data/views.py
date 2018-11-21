@@ -41,7 +41,8 @@ def awCalorie(request):
                 else:
                     content = ""
                 output = {
-                    "FOOD": result.get("cal").get("name"),
+                    "FOOD": params.get("FOOD").get("value"),
+                    "FOODREET": result.get("cal").get("name"),
                     "Calorie": result.get("cal").get("kal"),
                     "Content": content
                 }
