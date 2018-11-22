@@ -109,10 +109,10 @@ def awClt(request):
         data = request.data
         params = data.get("action").get("parameters")
         if params is not None:
-            weight = params.get("WEIGHTS").get("value")
-            height = params.get("HEIGHTS").get("value")
-            age = params.get("AGES").get("value")
-            gender = params.get("GENDERS").get("value")
+            weight = params.get("WS").get("value")
+            height = params.get("HS").get("value")
+            age = params.get("AS").get("value")
+            gender = params.get("GS").get("value")
             _mins = params.get("MINS").get("value")
             _cals = params.get("CALS").get("value")
             _type = params.get("TYPE").get("value")
