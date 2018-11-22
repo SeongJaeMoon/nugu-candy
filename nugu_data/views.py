@@ -103,18 +103,18 @@ def awBmi(request):
 # Request Param: weight_kg, height_cm, age, gender, _mins, _cals, _type
 # return: Energy
 @api_view(["POST"])
-def awClt(request):
+def awCalts(request):
     if request.data:
         fb = Firebase()
         data = request.data
         params = data.get("action").get("parameters")
         if params is not None:
-            weight = params.get("WS").get("value")
-            height = params.get("HS").get("value")
+            weight = params.get("WES").get("value")
+            height = params.get("HES").get("value")
             age = params.get("AS").get("value")
             gender = params.get("GS").get("value")
             _mins = params.get("MINS").get("value")
-            _cals = params.get("CALS").get("value")
+            # _cals = params.get("CALS").get("value")
             _type = params.get("TYPE").get("value")
             fb.user_info['height'] = height
             fb.user_info['weight'] = weight
@@ -129,8 +129,8 @@ def awClt(request):
             
             if mins is not None:
                 result = fb.cal_clt(_type=_type, _mins=_mins)
-            elif clas is not None:
-                result = fb.cal_clt(_type=_type, _cals=_cals)
+            # elif clas is not None:
+            #     result = fb.cal_clt(_type=_type, _cals=_cals)
             else:
                 return Response({"resultCode": "13"}) # 시간 or 칼로리 정보 부족
             
@@ -139,18 +139,19 @@ def awClt(request):
 
             if result:
                 output = {
-                    "WEIGHT" :params.get("WEIGHT").get("value"),
-                    "HEIGHT": params.get("WEIGHT").get("value"),
-                    "AGE": params.get("AGE").get("value"),
-                    "GENDER": params.get("GENDER").get("value"),
-                    "WEIGHTS": weight,
-                    "HEIGHTS": height,
-                    "AGES": age,
-                    "GENDERS": gender,
-                    "_mins": _mins,
-                    "_cals": _cals,
-                    "_type": _type,
-                    "content": result
+                    "WT" :params.get("WT").get("value"),
+                    "HT": params.get("HT").get("value"),
+                    "AE": params.get("AE").get("value"),
+                    "GE": params.get("GE").get("value"),
+                    "EX": params.get("EX").get("value"),
+                    "TIME": params.get("TIME").get("value"),
+                    "WES": weight,
+                    "HES": height,
+                    "AS": age,
+                    "GS": gender,
+                    "MINS": _mins,
+                    "TYPE": _type,
+                    "ANALCO": result
                 }
                 return Response(data={"version":"1.0.0", 
                                       "resultCode":"OK", 

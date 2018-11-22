@@ -6,6 +6,6 @@ urlpatterns = [
     url(r'^health$', views.health, name='health'),
     url(r'^awCalorie$', views.awCalorie, name='awCalorie'),
     url(r'^awBmi$', views.awBmi, name="awBmi"),
-    url(r'^awClt$', views.awClt, name="awClt"),
+    url(r'^awCalts$', views.awCalts, name="awCalts"),
     url(r'^awEnergy$', views.awEnergy, name="awEnergy"),
 ]
