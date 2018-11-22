@@ -1,4 +1,4 @@
-import os, time
+import os, time, re
 import json
 from dateutil.parser import parse
 from openpyxl import load_workbook
@@ -304,18 +304,27 @@ class Firebase():
         return result
 
 
-    def cal_clt(self, _type=None, _mins=0, _cals=0):
+    def cal_clt(self, _type=None, _mins=None, _cals=0):
         height_cm = int(self.user_info.get('height'))
         weight_kg = int(self.user_info.get('weight'))
         age = int(self.user_info.get('age'))
         gender = int(self.user_info.get('gender'))
-
+        
+        if isinstance(_mins, str):
+            p = re.compile('\d+')
+            m = p.match(_mins)
+            if m:
+                _mins = int(m.group())
+            else:
+                return 14 # mins or cals error
+        if _mins is None or not _mins: 
+            return 14 # mins or cals error
         if (age <= 12) or (age > 80):
-           return 11 # age error, "Between 13 and 80"
+            return 11 # age error, "Between 13 and 80"
         if (weight_kg <= 40) or (weight_kg > 600):
-           return 12 # weight error, "Between 41 and 599"
+            return 12 # weight error, "Between 41 and 599"
         if (50 > height_cm):
-           return 13 # height error, "Over the 50cm"
+            return 13 # height error, "Over the 50cm"
         if (_mins > 0 and _cals > 0) or (_mins == 0 and _cals == 0):
 	        return 14 # mins or cals error
 
@@ -336,13 +345,6 @@ class Firebase():
         return str(value) + "cal"
 
 
-    def save_db(self, _id):
-        height = self.user_info['height']
-        weight = self.user_info['weight']
-        age = self.user_info['age']
-        gender = self.user_info['gender']
-
-
 if __name__ == "__main__":
     start = time.time()
     fb = Firebase()
@@ -355,7 +357,9 @@ if __name__ == "__main__":
     # fb.user_info['pa'] = fb.fm_pa_list[1]
     print(fb.bmi)
     print(str(fb.get_energy())+"kcal") 
-    print(fb.cal_clt(_type="자전거", _cals=3000)) # input: _type, MinsorCals
+    print(fb.cal_clt(_type="자전거", _mins="60")) # input: _type, MinsorCals
+    print(fb.cal_clt(_type="자전거", _mins="반")) # input: _type, MinsorCals
+    print(fb.cal_clt(_type="자전거", _mins="60분")) # input: _type, MinsorCals
     print(fb.major_nutrients())
 
     '''

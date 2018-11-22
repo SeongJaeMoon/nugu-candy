@@ -71,7 +71,6 @@ def awBmi(request):
         fb = Firebase()
         data = request.data
         params = data.get("action").get("parameters")
-        
         if params is not None:
             weight = params.get("WEIGHTS").get("value")
             height = params.get("HEIGHTS").get("value")
@@ -135,6 +134,9 @@ def awClt(request):
             else:
                 return Response({"resultCode": "13"}) # 시간 or 칼로리 정보 부족
             
+            if result in [11, 12, 13, 14]:
+                return Response({"resultCode": str(result)}) # 정보 부족
+
             if result:
                 output = {
                     "WEIGHT" :params.get("WEIGHT").get("value"),
@@ -171,8 +173,6 @@ def awEnergy(request):
         fb = Firebase()
         data = request.data
         params = data.get("action").get("parameters")
-        # session = data.get("context").get("session").get("id")
-
         if params is not None:
             weight = params.get("WS").get("value")
             height = params.get("HS").get("value")
