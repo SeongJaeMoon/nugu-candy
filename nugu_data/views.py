@@ -127,7 +127,7 @@ def awCalts(request):
             else:
                 return Response({"resultCode": "12"}) # 성별 정보 부족
             
-            if mins is not None:
+            if _mins is not None:
                 result = fb.cal_clt(_type=_type, _mins=_mins)
             # elif clas is not None:
             #     result = fb.cal_clt(_type=_type, _cals=_cals)
