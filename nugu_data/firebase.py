@@ -247,9 +247,9 @@ class Firebase():
             temp_bmi = round(weight_kg / (height_cm * height_cm) * 10000, 2)
             if temp_bmi < 18.5:
                 ret = "저체중"
-            elif temp_bmi > 18.5 and temp_bmi < 24.9:
+            elif temp_bmi >= 18.5 and temp_bmi < 24.9:
                 ret = "정상체중"
-            elif temp_bmi > 25 and temp_bmi < 29.9:
+            elif temp_bmi >= 25 and temp_bmi < 29.9:
                 ret = "과체중"
             else:
                 ret = "비만"
@@ -348,19 +348,22 @@ class Firebase():
 if __name__ == "__main__":
     start = time.time()
     fb = Firebase()
-    fb.set_bmi(75, 178) # input: weight_kg, height_cm
-    fb.user_info['height'] = 178 # input: height_cm
-    fb.user_info['weight'] = 75 # input: weight_cm
-    fb.user_info['age'] = 26 # input: age_number
-    fb.user_info['gender'] = 1 # input: gender_MaleorFemale
-    fb.user_info['pa'] = fb.m_pa_list[1] # input: 신체 활동 계수, 비활동적, 보통, 활동적, 매우 활동적
-    # fb.user_info['pa'] = fb.fm_pa_list[1]
-    print(fb.bmi)
-    print(str(fb.get_energy())+"kcal") 
-    print(fb.cal_clt(_type="자전거", _mins="60")) # input: _type, MinsorCals
-    print(fb.cal_clt(_type="자전거", _mins="반")) # input: _type, MinsorCals
-    print(fb.cal_clt(_type="자전거", _mins="60분")) # input: _type, MinsorCals
-    print(fb.major_nutrients())
+    fb.set_cal("참치김밥")
+    print(fb.ret)
+
+    # fb.set_bmi(75, 178) # input: weight_kg, height_cm
+    # fb.user_info['height'] = 178 # input: height_cm
+    # fb.user_info['weight'] = 75 # input: weight_cm
+    # fb.user_info['age'] = 26 # input: age_number
+    # fb.user_info['gender'] = 1 # input: gender_MaleorFemale
+    # fb.user_info['pa'] = fb.m_pa_list[1] # input: 신체 활동 계수, 비활동적, 보통, 활동적, 매우 활동적
+    # # fb.user_info['pa'] = fb.fm_pa_list[1]
+    # print(fb.bmi)
+    # print(str(fb.get_energy())+"kcal") 
+    # print(fb.cal_clt(_type="자전거", _mins="60")) # input: _type, MinsorCals
+    # print(fb.cal_clt(_type="자전거", _mins="반")) # input: _type, MinsorCals
+    # print(fb.cal_clt(_type="자전거", _mins="60분")) # input: _type, MinsorCals
+    # print(fb.major_nutrients())
 
     '''
     test -> e.g.
